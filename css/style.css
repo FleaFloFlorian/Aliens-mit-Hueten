@@ -1,0 +1,475 @@
+@font-face {
+    font-family: 'BuildABrick';
+    src: url(../fonts/BuildABrick-Regular.woff2) format('woff2'),
+         url(../fonts/BuildABrick-Regular.woff) format('woff');
+}
+
+#splash-screen {
+    position: fixed; /* Positioniert den Splash Screen fix über allem */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:url(../backgrounds/splashart.pdf) ; 
+        background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: flex; /* Für einfache Zentrierung */
+    justify-content: center; /* Inhalt horizontal zentrieren */
+    align-items: center; /* Inhalt vertikal zentrieren */
+    flex-direction: column;
+    z-index: 300; /* Stellt sicher, dass er über anderen Elementen liegt */
+    transition: opacity 0.5s ease-out; /* Weiche Übergangsanimation */
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #d520ab;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-top: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+body {
+    background-image: url(../backgrounds/magentaback.png);
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    font-family: 'BuildABrick', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Use border-box everywhere to make width/height calculations predictable */
+* { box-sizing: border-box; }
+
+:root {
+    --panel-h: 400px; /* single source of truth for panel heights */
+    --panel-header-h: 44px; /* header height used in inner calc() formulas */
+}
+
+/* Layout for the main sections */
+#layout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 10;
+    box-sizing: border-box;  /* ensure padding is included in width/height */
+}
+
+/* Make panels transparent and clickable overlays */
+#menubox {
+    pointer-events: auto;
+    background-color: rgba(176, 163, 163, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#slider {
+    pointer-events: auto;
+    border-radius: 12px;
+    box-shadow: none;
+    position: fixed;
+         /* Abstand nach oben – anpassbar */
+    right: 20px !important;            /* immer rechts am Fenster */
+    height: var(--panel-h) !important; /* gleiche Höhe wie linkes Panel */
+    width: 300px;
+    max-width: 20%;
+    z-index: 9999;          /* sicher über allem */
+    display: flex;
+    flex-direction: column;
+    accent-color: magenta;
+
+}
+
+#aliens {
+    /* Make the container box invisible but keep children visible */
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    pointer-events: none;
+}
+
+/* Character area */
+#character-area {
+    /* Position fixed in center of viewport, no relative box */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    z-index: 5;
+    pointer-events: none;
+    perspective: 1000px;
+}
+
+#character-area img {
+    position: absolute;
+    /* Scale the image to fit the character-area while preserving aspect ratio.
+       Use max-width/max-height and center the image so it auto-sizes inside the box. */
+    max-width: 100%;
+    max-height: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#alien-img {
+    z-index: 1;
+}
+
+/* Exit animation: move to right (spiegelbild der entry-animation) */
+/* Apply to any element with class, not only #alien-img */
+.slide-out-right {
+    /* faster, smooth exit — avoid mid-animation pause by using a single 0->100 keyframe and ease-out */
+    animation: slideOutRight 2.6s ease-out forwards;
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        z-index: 10;
+        opacity: 1;
+    }
+    100% {
+        /* move sufficiently off-screen to the right and fade */
+        transform: translate(calc(-50% + 1100px), -50%) scale(1);
+        z-index: 5;
+        opacity: 0;
+    }
+}
+
+/* Entry animation: come from left at bottom, move up to center */
+/* Apply to any element with class, not only #alien-img */
+.slide-in-left {
+    animation: slideInFromLeft 3.5s ease-in-out forwards;
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        transform: translate(calc(-50% - 150%), -50%) scale(0.9);
+        z-index: 8;
+        opacity: 0;
+    }
+    35% {
+        /* Come from left to center */
+        transform: translate(-50%, -50%) scale(1);
+        z-index: 8;
+        opacity: 1;
+    }
+    100% {
+        /* Stay in center */
+        transform: translate(-50%, -50%) scale(1);
+        z-index: 1;
+        opacity: 1;
+    }
+}
+
+#hat-img {
+    /* Raised so the hat always stays above animated aliens */
+    z-index: 100;
+    transform-origin: top center;
+    position: absolute;
+    top: 0;              /* wird per JS gesetzt */
+    left: 50%;           /* mittig machen */
+    transform: translateX(-50%); /* genau zentrieren */
+    width: 40%;          /* passt sich automatisch an */
+    pointer-events: none;
+
+    /* Wir benutzen die PNG als Maske und färben mit background-color.
+       Masking ist robuster für weiße/monochrome PNGs als reine Filter. */
+    background-color: hsl(0, 50%, 45%);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center top;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center top;
+    mask-size: contain;
+    will-change: filter, transform;
+}
+
+#overlay {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    pointer-events: none;
+    z-index: 10; 
+}
+
+/* Overlay image that shows hat outline on top of colored mask. */
+#hat-outline {
+    /* Outline should be above the hat so lines remain visible */
+    z-index: 110;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: top center;
+    pointer-events: none;
+    mix-blend-mode: multiply; /* black lines remain, white areas reveal the colored background */
+    width: 40%;
+    height: auto;
+    will-change: filter, transform;
+}
+
+/* Thumbnails */
+.thumb-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.alien-thumb {
+    display: none;
+}
+
+.thumb-row img {
+    width: 100%;
+    max-width: 60px;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+
+/* Areas styling */
+/* Panels: same height for visual alignment */
+#menubox {
+    width: 200px;
+    height: var(--panel-h);
+    background-color: rgb(110, 71, 55);
+    border: 2px solid black;
+}
+
+#aliens {
+    width: 600px;
+    height: var(--panel_h, var(--panel-h));
+    background-color: lightblue;
+    border: 2px solid black;
+    border-radius: 20px;
+}
+
+/* Scrollable container for the hat controls (clips overflow like the hat menu) */
+.controls-scroll {
+    
+    width: 100%;
+    flex: 1;  /* take remaining space */
+    -webkit-overflow-scrolling: touch;
+
+    /* hide native scroll visuals (same as .hat-scroll) */
+    -ms-overflow-style: none; scrollbar-width: none;
+}
+
+.controls-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Make panel headers consistent so inner calc() formulas match exactly */
+#menubox h3, #aliens h3, #slider h3 {
+    height: var(--panel-header-h);
+    line-height: var(--panel-header-h);
+    margin: 0;
+    padding: 0 6px;
+}
+
+/* Slider styles */
+.slider-container {
+    position: relative;
+    width: 100%;
+}
+.slides-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+.slides {
+    display: flex;
+    transition: transform 0.45s ease;
+    will-change: transform;
+}
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+}
+.slide img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.4);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 18px;
+}
+.slider-btn:hover { background: rgba(0,0,0,0.6); }
+.slider-btn.prev { left: 6px; }
+.slider-btn.next { right: 6px; }
+
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+.slider-dots .dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 50%;
+    cursor: pointer;
+}
+.slider-dots .dot.active { background: rgba(0,0,0,0.8); }
+
+/* Hat controls styling */
+.hat-controls {
+    margin-top: 12px;
+    background: rgba(255, 0, 255, 0.227);
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    overflow-y: auto;
+    max-height: 270px;
+}
+.hat-controls h4 { margin: 4px 0 8px 0; }
+.hat-controls label {
+    display: block;
+    margin-bottom: 8px;
+}
+.hat-controls input[type="range"] {
+    width: 100%;
+    margin-top: 4px;
+}
+.hat-controls span { font-weight: 600; margin-left: 6px; }
+
+/* Background selector buttons */
+.background-controls {
+    margin-top: 6px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bg-btn {
+    height: 30px;
+    font-family: 'BuildABrick';
+    font-size: 20px;
+    padding: 6px;
+    border: 2px transparent;
+    border-radius: 4px;
+    background-color: rgba(255, 0, 255, 0.364);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.bg-btn:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+.bg-btn.active {
+    background-color: rgba(193, 9, 193, 0.615);
+    color: white;
+    border-color: #fff;
+}
+
+/* Responsive: wenn Platz mehr, begrenze Höhe */
+@media (min-width: 900px) {
+    #slider { width: 33%; }
+}
+
+/* Hat horizontal scroll (infinite-looking) */
+.hat-scroll {
+    overflow-y: auto;
+    width: 100%;
+    height: 100%; /* fill menubox below the header */
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    padding: 12x;
+}
+.hat-track {
+    display: grid;
+    grid-template-columns: 1fr; /* single column by default */
+    gap: 8px;
+    justify-items: center;
+    /* smooth programmatic scrolling */
+    scroll-behavior: smooth;
+}
+.hat-track .hat-thumb {
+    width: 56px;
+    height: auto;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    display: block;
+}
+
+.hat-track .hat-thumb:hover { border-color: rgb(73, 51, 40); }
+
+/* Hat item: contains shelf overlay and the hat thumbnail. The shelf sits above
+   the thumbnail and will be cloned together with thumbs so it scrolls with them. */
+.hat-item {
+    position: relative;
+    width: 56px;
+    display: inline-block;
+}
+.hat-item .hat-thumb {
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+.hat-item .shelf {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 55px;
+    width: 200px; /* slightly wider than thumb to create shelf underline effect */
+    pointer-events: none;
+}
+
+/* hide native scrollbar visuals but keep scrolling functionality */
+.hat-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+.hat-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Responsive: use two columns when the viewport is wide enough; otherwise fall back to one column
+   This ensures the right column won't be cut off when the window is narrow. */
+@media (min-width: 700px) {
+    .hat-track { grid-template-columns: repeat(2, 1fr); }
+}
