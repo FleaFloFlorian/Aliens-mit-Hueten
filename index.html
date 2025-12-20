@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Aliens mit Hüten 🧢👒</title>
+</head>
+<body>
+
+<div id="splash-screen">
+    <h1>Aliens mit Hüten</h1>
+    <div class="loader"></div>
+</div>
+
+    <div id="layout" class="hidden">
+
+        <!-- MENU (Hüte) -->
+        <div id="menubox">
+
+                <div class="hat-scroll">
+                        <div class="hat-track">
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/bow.png" alt="bow">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/cap.png" alt="cap">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/crown.png" alt="crown">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/graduation.png" alt="graduation">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/tp.png" alt="tp">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/party.png" alt="party">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/sombrero.png" alt="sombrero">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/spitzhut.png" alt="spitzhut">
+                            </div>
+                            <div class="hat-item">
+                                <img class="shelf" src="schrank/shelf.png" alt="shelf">
+                                <img class="hat-thumb" src="hats/tophat.png" alt="tophat">
+                            </div>
+                            </div>
+                    
+                </div>
+        </div>
+
+        <!-- ALIEN-BEREICH -->
+        <div id="aliens">
+        
+  
+            <!-- Charakteranzeige -->
+            <div id="character-area">
+                <img id="alien-img" src="aliens/clara.png" alt="alien">
+                <!-- Das Hut-Element ist ein DIV, das die PNG als Maske benutzt. data-src enthält die Datei. -->
+                <div id="hat-img" data-src="hats/bow.png" aria-hidden="true"></div>
+                <!-- Overlay-Image, das die schwarzen Outlines sichtbar macht (mix-blend-mode: multiply) -->
+                <img id="hat-outline" src="hats/bow.png" alt="hat-outline" aria-hidden="true">
+            </div>
+            <div id="alien-speech" aria-hidden="true"></div>
+
+            <!-- Alien Thumbnails -->
+            <div class="thumb-row">
+                <img class="alien-thumb" src="aliens/clara.png" alt="clara">
+                <img class="alien-thumb" src="aliens/henry.png" alt="henry">
+                <img class="alien-thumb" src="aliens/mama.png" alt="mama">
+                <img class="alien-thumb" src="aliens/olaf.png" alt="olaf">
+                <img class="alien-thumb" src="aliens/papa.png" alt="papa">
+            </div>
+        </div>
+
+        <!-- SLIDER -->
+        <div id="slider">
+            
+            
+            <!-- Background selector buttons (outside scrollable area) -->
+            <div class="background-controls">
+             
+                <button id="bg-magenta" class="bg-btn active" data-bg="backgrounds/magentaback.png">Lush</button>
+                <button id="bg-cyan" class="bg-btn" data-bg="backgrounds/cyanback.png">Lucid</button>
+                <button id="bg-orange" class="bg-btn" data-bg="backgrounds/orangeback.png">Lavish</button>
+            </div>
+            
+            <!--  -->
+                <!-- Hat Controls: Größe, Position, Rotation, Farbe -->
+                <!-- Wrapped in a scrollable container so extra sliders are clipped and
+                     become visible by scrolling (similar to the hat menu). -->
+                <div class="controls-scroll">
+                <div class="hat-controls">
+
+                    <label>B<span id="hat-size-val"></span>
+                        <input id="hat-size" type="range" min="20" max="120" value="45">
+                    </label>
+
+                    <label>D<span id="hat-top-val"></span>
+                        <input id="hat-top" type="range" min="-50" max="50" value="-15">
+                    </label>
+
+                    <label>V<span id="hat-x-val"></span>
+                        <input id="hat-x" type="range" min="-50" max="50" value="0">
+                    </label>
+
+                    <label>U<span id="hat-rotate-val"></span>
+                        <input id="hat-rotate" type="range" min="-45" max="45" value="0">
+                    </label>
+
+                    <label>P<span id="hat-outline-opacity-val"></span>
+                        <input id="hat-outline-opacity" type="range" min="0" max="100" value="100">
+                    </label>
+
+                    <label>Ö<span id="hat-hue-val"></span>
+                        <input id="hat-hue" type="range" min="0" max="360" value="0">
+                    </label>
+
+                    <label>ö<span id="hat-light-val"></span>
+                        <input id="hat-light" type="range" min="0" max="100" value="60">
+                    </label>
+
+                    <label>ü<span id="hat-sat-val"></span>
+                        <input id="hat-sat" type="range" min="0" max="200" value="100">
+                    </label>
+
+                    <label>Ü<span id="hat-opacity-val"></span>
+                        <input id="hat-opacity" type="range" min="0" max="100" value="100">
+                    </label>
+                </div>
+                </div>
+
+            </div>
+
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
